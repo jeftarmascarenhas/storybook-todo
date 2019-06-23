@@ -1,17 +1,13 @@
-import React from 'react';
+import React from "react";
+import PropTypes from "prop-types";
 
-import Task from './Task'
+import Task from "./Task";
 
-const TaskList = ({
-  loading,
-  tasks,
-  onPinTask,
-  onArchiveTask,
-}) => {
+const TaskList = ({ loading, tasks, onPinTask, onArchiveTask }) => {
   const events = {
     onPinTask,
-    onArchiveTask,
-  }
+    onArchiveTask
+  };
 
   const LoadingRow = (
     <div className="loading-item">
@@ -20,7 +16,7 @@ const TaskList = ({
         <span>Loading</span> <span>cool</span> <span>state</span>
       </span>
     </div>
-  )
+  );
 
   if (loading) {
     return (
@@ -32,7 +28,7 @@ const TaskList = ({
         {LoadingRow}
         {LoadingRow}
       </div>
-    )
+    );
   }
 
   if (tasks.length === 0) {
@@ -44,14 +40,32 @@ const TaskList = ({
           <div className="subtitle-message">Sit back and relax</div>
         </div>
       </div>
-    )
+    );
   }
+
+  const taskInOrder = [
+    ...tasks.filter(t => t.state === "TASK_PINNED"),
+    ...tasks.filter(t => t.state !== "TASK_PINNED")
+  ];
 
   return (
     <div className="list-items">
-      {tasks.map(task => <Task key={task.id} task={task} {...events} />)}
+      {taskInOrder.map(task => (
+        <Task key={task.id} task={task} {...events} />
+      ))}
     </div>
   );
+};
+
+TaskList.propTypes = {
+  loading: PropTypes.bool,
+  tasks: PropTypes.arrayOf(Task.propTypes.task).isRequired,
+  onPinTask: PropTypes.func.isRequired,
+  onArchiveTask: PropTypes.func.isRequired
+};
+
+TaskList.defaultProps = {
+  loading: false
 };
 
 export default TaskList;
